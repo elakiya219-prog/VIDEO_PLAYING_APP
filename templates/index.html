@@ -1,22 +1,173 @@
-```<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Playing App</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Smart Video Playing App</title>
+
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
 
     <div class="container">
-        <h1>My Video Player</h1>
 
-        <video width="700" controls>
-            <source src="{{ url_for('static', filename='videos/file_example_MP4_480_1_5MG.mp4') }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+        <div class="top">
+            <div>
+                <h1>🎬 Smart Video Player</h1>
+                <p>Watch • Search • Control</p>
+            </div>
+
+            <button onclick="toggleMode()" class="mode">
+                🌙 Dark Mode
+            </button>
+        </div>
+
+        <input
+            type="text"
+            id="search"
+            placeholder="Search videos..."
+            onkeyup="searchVideo()"
+        >
+
+        <div class="player-section">
+
+            <video id="videoPlayer" controls>
+                <source
+                    id="videoSource"
+                    src="{{ url_for('static', filename='videos/file_example_MP4_480_1_5MG.mp4') }}"
+                    type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+
+            <h2 id="videoTitle">Sample Video</h2>
+
+            <div class="controls">
+                <button onclick="previousVideo()">⏮ Previous</button>
+                <button onclick="nextVideo()">Next ⏭</button>
+            </div>
+
+        </div>
+
+        <h2 class="library-title">Video Library</h2>
+
+        <div class="video-list" id="videoList">
+
+            <div class="video-card" onclick="selectVideo(0)">
+                <h3>🎥 Sample Video</h3>
+                <p>Category: General</p>
+            </div>
+
+            <div class="video-card" onclick="selectVideo(0)">
+                <h3>🎬 Video Player Demo</h3>
+                <p>Category: Demo</p>
+            </div>
+
+            <div class="video-card" onclick="selectVideo(0)">
+                <h3>📺 Learning Video</h3>
+                <p>Category: Education</p>
+            </div>
+
+        </div>
+
     </div>
 
+    <script>
+
+        const videos = [
+            {
+                title: "Sample Video",
+                file: "{{ url_for('static', filename='videos/file_example_MP4_480_1_5MG.mp4') }}"
+            }
+        ];
+
+        let currentVideo = 0;
+
+        function selectVideo(index) {
+
+            currentVideo = index;
+
+            document.getElementById("videoSource").src =
+                videos[currentVideo].file;
+
+            document.getElementById("videoTitle").innerText =
+                videos[currentVideo].title;
+
+            const player =
+                document.getElementById("videoPlayer");
+
+            player.load();
+            player.play();
+        }
+
+        function nextVideo() {
+
+            currentVideo++;
+
+            if (currentVideo >= videos.length) {
+                currentVideo = 0;
+            }
+
+            selectVideo(currentVideo);
+        }
+
+        function previousVideo() {
+
+            currentVideo--;
+
+            if (currentVideo < 0) {
+                currentVideo = videos.length - 1;
+            }
+
+            selectVideo(currentVideo);
+        }
+
+        function searchVideo() {
+
+            const search =
+                document.getElementById("search")
+                .value.toLowerCase();
+
+            const cards =
+                document.querySelectorAll(".video-card");
+
+            cards.forEach(function(card) {
+
+                const text =
+                    card.innerText.toLowerCase();
+
+                if (text.includes(search)) {
+                    card.style.display = "block";
+                }
+                else {
+                    card.style.display = "none";
+                }
+
+            });
+
+        }
+
+        function toggleMode() {
+
+            document.body.classList.toggle("dark-mode");
+
+            const button =
+                document.querySelector(".mode");
+
+            if (document.body.classList.contains("dark-mode")) {
+                button.innerText = "☀ Light Mode";
+            }
+            else {
+                button.innerText = "🌙 Dark Mode";
+            }
+
+        }
+
+    </script>
+
 </body>
-</html>```
+
+</html>
